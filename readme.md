@@ -3,11 +3,14 @@
 </p>
 
 <p align="center">
-<a href="https://discord.com/invite/yWKgRT6" title="discord">
-<img src="https://img.shields.io/discord/246524734718738442" alt="discord">
+<a href="https://discord.com/invite/yWKgRT6">
+<img src="https://img.shields.io/discord/246524734718738442" alt="discord" />
 </a>
-<a href="./license" title="license">
-<img src="https://img.shields.io/github/license/Whirlsplash/whirl" alt="license">
+<a href="https://www.codefactor.io/repository/github/senpy-club/api">
+<img src="https://www.codefactor.io/repository/github/senpy-club/api/badge" alt="codefactor" />
+</a>
+<a href="./license">
+<img src="https://img.shields.io/github/license/Whirlsplash/whirl" alt="license" />
 </a>
 </p>
 
