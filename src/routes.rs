@@ -41,7 +41,7 @@ https://github.com/fuwn
 
 ### license
 gnu general public license v3.0 (gpl-3.0-only)
-https://github.com/senpy-club/api/blob/main/LICENSE"#
+https://github.com/senpy-club/api/blob/main/license"#
 }
 
 #[get("/github")]
