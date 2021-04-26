@@ -1,4 +1,4 @@
-[development]
+[debug]
 address = "0.0.0.0"
 port = 8000
 log = "normal"
@@ -7,6 +7,6 @@ log = "normal"
 address = "0.0.0.0"
 log = "normal"
 
-[production]
+[release]
 address = "0.0.0.0"
 log = "critical"
