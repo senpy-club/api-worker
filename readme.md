@@ -9,6 +9,9 @@
 <a href="https://www.codefactor.io/repository/github/senpy-club/api">
 <img src="https://www.codefactor.io/repository/github/senpy-club/api/badge" alt="codefactor" />
 </a>
+<a href="https://saythanks.io/to/contact@fuwn.me">
+<img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" alt="Say Thanks" />
+</a>
 <a href="./license">
 <img src="https://img.shields.io/github/license/Whirlsplash/whirl" alt="license" />
 </a>
