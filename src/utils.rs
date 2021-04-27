@@ -1,4 +1,4 @@
-// Copyleft 2021-2021 The Senpy Club
+// Copyleft (ɔ) 2021-2021 The Senpy Club
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::{
