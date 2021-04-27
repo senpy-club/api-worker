@@ -27,8 +27,11 @@ releases version `0.5.0`, it will stay broken.
 - build (prod): `ROCKET_ENV=prod cargo build --release`
 
 also note that this api wrapper leverages the official github api, meaning that rate-limits are
-going to be self hosting this project, it is highly encouraged that you generate yourself a github
-personal access token and set the environment variable `GITHUB_TOKEN` as your pat.
+very much present.
+
+if you are going to be self hosting this project, it is highly encouraged that
+you generate yourself a github personal access token and set the environment variable `GITHUB_TOKEN`
+as your pat.
 
 ## contributing
 please reference the [contribution guidelines](./contributing.md) of this repository.
