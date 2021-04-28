@@ -11,25 +11,17 @@ pub mod routes;
 pub mod structures;
 pub mod utils;
 
-use std::str::FromStr;
-
 #[launch]
 fn rocket() -> _ {
   dotenv::dotenv().ok();
 
-  rocket::build()
-    .mount("/", routes![routes::index])
-    .mount(
-      "/api/v1",
-      routes![
-        routes::github,
-        routes::languages,
-        routes::language,
-        routes::random
-      ],
-    )
-    .manage(rocket_cors::CorsOptions {
-      allowed_origins: rocket_cors::AllowedOrigins::some_exact(&["*"]),
-      ..Default::default()
-    })
+  rocket::build().mount("/", routes![routes::index]).mount(
+    "/api/v1",
+    routes![
+      routes::github,
+      routes::languages,
+      routes::language,
+      routes::random
+    ],
+  )
 }
