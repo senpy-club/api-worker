@@ -11,23 +11,13 @@ pub mod routes;
 pub mod structures;
 pub mod utils;
 
-use rocket_cors as cors;
+use std::str::FromStr;
 
 #[launch]
 fn rocket() -> _ {
   dotenv::dotenv().ok();
 
   rocket::build()
-    .manage(
-      cors::CorsOptions {
-        allowed_origins: cors::AllowedOrigins::all(),
-        allowed_methods: cors::AllowedMethods::new(),
-        allowed_headers: cors::AllowedHeaders::all(),
-        ..Default::default()
-      }
-      .to_cors()
-      .unwrap(),
-    )
     .mount("/", routes![routes::index])
     .mount(
       "/api/v1",
@@ -38,4 +28,8 @@ fn rocket() -> _ {
         routes::random
       ],
     )
+    .manage(rocket_cors::CorsOptions {
+      allowed_origins: rocket_cors::AllowedOrigins::some_exact(&["*"]),
+      ..Default::default()
+    })
 }
