@@ -13,21 +13,16 @@
 <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" alt="Say Thanks" />
 </a>
 <a href="./license">
-<img src="https://img.shields.io/github/license/Whirlsplash/whirl" alt="license" />
+<img src="https://img.shields.io/github/license/senpy-club/api" alt="license" />
 </a>
 </p>
 
-## notice
-nix integration is currently broken. until [rocket](https://crates.io/crates/rocket) officially
-releases version `0.5.0`, it will stay broken.
-
 ## nix
-- build: `nix-build senpy-api.nix`
-- docker: `nix-build default.nix`
+- build: `nix-build`
+- docker: `nix-build docker.nix`
 
-## usage
-- run (dev): `ROCKET_ENV=dev cargo run`
-- build (prod): `ROCKET_ENV=prod cargo build --release`
+## usage (without docker)
+- run (dev): `cargo run`
 
 also note that this api wrapper leverages the official github api, meaning that rate-limits are
 very much present.
