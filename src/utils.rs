@@ -7,17 +7,22 @@ use crate::{
 };
 
 pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error>> {
+  let mut client = actix_web::client::Client::new()
+    .get(GITHUB_API_ENDPOINT)
+    .header("User-Agent", USER_AGENT);
+
+  if std::env::var("GITHUB_TOKEN").is_ok() {
+    client = client.header(
+      "Authorization",
+      format!(
+        "token {}",
+        std::env::var("GITHUB_TOKEN").unwrap_or_else(|_| "Null".to_string())
+      ),
+    );
+  }
+
   Ok(
-    actix_web::client::Client::new()
-      .get(GITHUB_API_ENDPOINT)
-      .header("User-Agent", USER_AGENT)
-      .header(
-        "Authorization",
-        format!(
-          "token {}",
-          std::env::var("GITHUB_TOKEN").unwrap_or_else(|_| "Null".to_string())
-        ),
-      )
+    client
       .timeout(std::time::Duration::from_secs(60))
       .send()
       .await?
