@@ -23,6 +23,6 @@ pub struct GitHubAPIResponseTree {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SenpyRandom {
-  pub(crate) language: String,
-  pub image:           String,
+  pub language: String,
+  pub image:    String,
 }
