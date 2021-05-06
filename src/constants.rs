@@ -1,4 +1,4 @@
-// Copyleft (ɔ) 2021-2021 The Senpy Club
+// copyleft (ɔ) 2021-2021 the senpy club
 // SPDX-License-Identifier: GPL-3.0-only
 
 pub const GITHUB_USER_CONTENT: &str =
