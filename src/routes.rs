@@ -70,7 +70,11 @@ pub async fn random() -> HttpResponse {
   let random_language =
     &filtered_languages[thread_rng().gen_range(0..filtered_languages.len() - 1)];
   let filtered_images = filter_images_by_language(random_language).await;
-  let random_image = &filtered_images[thread_rng().gen_range(0..filtered_images.len() - 1)];
+  let random_image = if filtered_images.len() == 1 {
+    &filtered_images[0]
+  } else {
+    &filtered_images[thread_rng().gen_range(0..filtered_images.len() - 1)]
+  };
 
   HttpResponse::Ok().json(SenpyRandom {
     language: random_language.clone(),
