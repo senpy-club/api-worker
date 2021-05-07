@@ -6,19 +6,25 @@ use crate::{
   structures::GitHubAPIResponse,
 };
 
-pub async fn github_api() -> Result<GitHubAPIResponse, reqwest::Error> {
+pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error>> {
   Ok(
-    reqwest::Client::new()
+    actix_web::client::Client::new()
       .get(GITHUB_API_ENDPOINT)
       .header("User-Agent", USER_AGENT)
       .header(
         "Authorization",
-        format!("token {}", std::env::var("GITHUB_TOKEN").unwrap()),
+        format!(
+          "token {}",
+          std::env::var("GITHUB_TOKEN").unwrap_or_else(|_| "Null".to_string())
+        ),
       )
       .send()
-      .await?
+      .await
+      .unwrap()
       .json::<GitHubAPIResponse>()
-      .await?,
+      .limit(20_000_000)
+      .await
+      .unwrap(),
   )
 }
 
@@ -34,7 +40,7 @@ pub async fn filter_languages() -> Vec<String> {
   languages
 }
 
-pub async fn filter_images_by_language(language: String) -> Vec<String> {
+pub async fn filter_images_by_language(language: &str) -> Vec<String> {
   let mut images = vec![];
 
   for i in github_api().await.unwrap().tree {
@@ -42,7 +48,7 @@ pub async fn filter_images_by_language(language: String) -> Vec<String> {
     //  "Language/Image.png" would become ["Language", "Image.png"]
 
     // TODO: Fix this with type_ascription
-    let x: Vec<&str> = i.path.split("/").collect();
+    let x: Vec<&str> = i.path.split('/').collect();
     if x[0] == language && i.path.contains('/') {
       images.push(format!("{}{}", GITHUB_USER_CONTENT, i.path))
     }

@@ -1,0 +1,17 @@
+{
+  "name": "senpy-api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install",
+    "commit": "cz",
+    "commit:signed": "cz -S"
+  },
+  "dependencies": {
+    "@commitlint/cli": "12.1.1",
+    "@commitlint/lint": "12.1.1",
+    "commitizen": "4.2.3",
+    "cz-conventional-commit": "1.0.6",
+    "husky": "6.0.0"
+  }
+}

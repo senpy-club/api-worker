@@ -19,3 +19,6 @@ result*
 # development
 .env
 /shell-dev.nix
+
+# npm
+/node_modules/
