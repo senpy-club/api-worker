@@ -10,6 +10,16 @@ pub struct GitHubAPIResponse {
   pub tree:      Vec<GitHubAPIResponseTree>,
   pub truncated: bool,
 }
+impl Default for GitHubAPIResponse {
+  fn default() -> Self {
+    GitHubAPIResponse {
+      sha:       "rate limited".to_string(),
+      url:       "rate limited".to_string(),
+      tree:      vec![],
+      truncated: false,
+    }
+  }
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GitHubAPIResponseTree {
