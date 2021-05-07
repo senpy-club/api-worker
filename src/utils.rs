@@ -18,9 +18,9 @@ pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error
           std::env::var("GITHUB_TOKEN").unwrap_or_else(|_| "Null".to_string())
         ),
       )
+      .timeout(std::time::Duration::from_secs(60))
       .send()
-      .await
-      .unwrap()
+      .await?
       .json::<GitHubAPIResponse>()
       .limit(20_000_000)
       .await
@@ -31,7 +31,7 @@ pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error
 pub async fn filter_languages() -> Vec<String> {
   let mut languages = vec![];
 
-  for i in github_api().await.unwrap().tree {
+  for i in github_api().await.unwrap_or_default().tree {
     if i._type == "tree" {
       languages.push(i.path);
     }
