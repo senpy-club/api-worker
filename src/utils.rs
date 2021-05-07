@@ -24,14 +24,14 @@ pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error
       .json::<GitHubAPIResponse>()
       .limit(20_000_000)
       .await
-      .unwrap(),
+      .unwrap_or_default(),
   )
 }
 
 pub async fn filter_languages() -> Vec<String> {
   let mut languages = vec![];
 
-  for i in github_api().await.unwrap_or_default().tree {
+  for i in github_api().await.unwrap().tree {
     if i._type == "tree" {
       languages.push(i.path);
     }
