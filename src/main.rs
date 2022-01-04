@@ -15,9 +15,18 @@ pub mod utils;
 async fn main() -> std::io::Result<()> {
   dotenv::dotenv().ok();
 
-  actix_web::HttpServer::new(|| {
+  let store = actix_ratelimit::MemoryStore::new();
+
+  actix_web::HttpServer::new(move || {
     actix_web::App::new()
       .wrap(actix_cors::Cors::default().allow_any_origin())
+      .wrap(
+        actix_ratelimit::RateLimiter::new(
+          actix_ratelimit::MemoryStoreActor::from(store.clone()).start(),
+        )
+        .with_interval(std::time::Duration::from_secs(60))
+        .with_max_requests(100),
+      )
       .service(routes::index)
       .service(
         actix_web::web::scope("/api/v1")
