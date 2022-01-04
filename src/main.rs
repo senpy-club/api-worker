@@ -2,6 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #![feature(type_ascription)]
+#![deny(
+  warnings,
+  nonstandard_style,
+  unused,
+  future_incompatible,
+  rust_2018_idioms,
+  unsafe_code
+)]
+#![deny(clippy::all, clippy::pedantic)] // clippy::nursery
+#![recursion_limit = "128"]
 
 #[macro_use]
 extern crate actix_web;

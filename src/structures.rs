@@ -1,6 +1,8 @@
 // Copyright (C) 2021-2021 the senpy club
 // SPDX-License-Identifier: GPL-3.0-only
 
+#![allow(clippy::used_underscore_binding)]
+
 use serde_derive::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]

@@ -2,7 +2,7 @@
 name = "senpy-api"
 version = "0.1.0"
 authors = ["Fuwn <contact@fuwn.me>"]
-edition = "2018"
+edition = "2021"
 #description = ""
 readme = "README.md"
 homepage = "https://github.com/senpy-club/api"
