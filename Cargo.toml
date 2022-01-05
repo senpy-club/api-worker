@@ -5,17 +5,22 @@ authors = ["Fuwn <fuwnzy@gmail.com>"]
 edition = "2018"
 #description = ""
 readme = "README.md"
-homepage = "http://github.com/senpy-club/api"
-repository = "http://github.com/senpy-club/api"
+homepage = "https://github.com/senpy-club/api"
+repository = "https://github.com/senpy-club/api"
 license = "GPL-3.0-only"
 keywords = ["rust", "anime", "senpy"]
 publish = false
 
 [dependencies]
+# Serialization
 serde = "1.0.125"
 serde_derive = "1.0.125"
+
+# Utility
 rand = "0.8.3"
 dotenv = "0.15.0"
+
+# Web
 actix-web = { version = "3.3.2", features = ["rustls"] }
 qstring = "0.7.2"
 actix-cors = "0.5.4"
