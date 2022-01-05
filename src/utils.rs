@@ -6,6 +6,8 @@ use crate::{
   structures::GitHubAPIResponse,
 };
 
+/// # Errors
+/// if GitHub API is unresponsive
 pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error>> {
   let mut client = actix_web::client::Client::new()
     .get(GITHUB_API_ENDPOINT)
@@ -33,10 +35,13 @@ pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error
   )
 }
 
+/// # Panics
+/// if GitHub API is unresponsive
 pub async fn filter_languages() -> Vec<String> {
   let mut languages = vec![];
 
   for i in github_api().await.unwrap().tree {
+    #[allow(clippy::used_underscore_binding)]
     if i._type == "tree" {
       languages.push(i.path);
     }
@@ -45,6 +50,8 @@ pub async fn filter_languages() -> Vec<String> {
   languages
 }
 
+/// # Panics
+/// if GitHub API is unresponsive
 pub async fn filter_images_by_language(language: &str) -> Vec<String> {
   let mut images = vec![];
 
@@ -55,7 +62,7 @@ pub async fn filter_images_by_language(language: &str) -> Vec<String> {
     // TODO: Fix this with type_ascription
     let x: Vec<&str> = i.path.split('/').collect();
     if x[0] == language && i.path.contains('/') {
-      images.push(format!("{}{}", GITHUB_USER_CONTENT, i.path))
+      images.push(format!("{}{}", GITHUB_USER_CONTENT, i.path));
     }
   }
 
