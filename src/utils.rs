@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 use crate::{
-  constants::{GITHUB_API_ENDPOINT, GITHUB_USER_CONTENT, USER_AGENT},
+  constants::{GITHUB_API_ENDPOINT, GITHUB_USER_CONTENT},
   structures::GitHubAPIResponse,
 };
 
@@ -11,7 +11,13 @@ use crate::{
 pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error>> {
   let mut client = actix_web::client::Client::new()
     .get(GITHUB_API_ENDPOINT)
-    .header("User-Agent", USER_AGENT);
+    .header(
+      "User-Agent",
+      format!(
+        "senpy-api - {}",
+        (0..10).map(|_| rand::random::<char>()).collect::<String>()
+      ),
+    );
 
   if std::env::var("GITHUB_TOKEN").is_ok() {
     client = client.header(
