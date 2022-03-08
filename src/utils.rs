@@ -82,7 +82,7 @@ pub async fn filter_images_by_language(language: &str) -> Vec<String> {
         constants::GITHUB_USER_CONTENT,
         // Pound symbols to URL (percent) encoding of pound symbol because we
         // are pushing a URL, not a string
-        item.path.replace("#", "%23")
+        item.path.replace('#', "%23")
       ));
     }
   }
