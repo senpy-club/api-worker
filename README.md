@@ -12,7 +12,7 @@
 <a href="https://saythanks.io/to/fuwnzy@gmail.com">
 <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" alt="Say Thanks" />
 </a>
-<a href="./license">
+<a href="LICENSE">
 <img src="https://img.shields.io/github/license/senpy-club/api" alt="license" />
 </a>
 </p>
