@@ -63,7 +63,8 @@ pub async fn main(
       Response::from_json(&serde_json::json!({
         "crate_version": env!("CARGO_PKG_VERSION"),
         "git_commit_hash": env!("GIT_COMMIT_HASH"),
-      }))
+      }))?
+      .with_cors(&utils::cors())
     })
     .run(request, environment)
     .await

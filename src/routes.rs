@@ -21,7 +21,7 @@ use worker::{Response, Result};
 
 use crate::{
   structures::SenpyRandom,
-  utils::{filter_images_by_language, filter_languages, github_api},
+  utils::{cors, filter_images_by_language, filter_languages, github_api},
 };
 
 pub fn index() -> Result<Response> {
@@ -64,19 +64,21 @@ license
 
 `gnu general public license v3.0 (:code:`gpl-3.0-only`)
 <https://github.com/senpy-club/api-worker/blob/main/LICENSE>`_"#,
-  )
+  )?
+  .with_cors(&cors())
 }
 
 pub async fn github() -> Result<Response> {
-  Response::from_json(&github_api().await.unwrap())
+  Response::from_json(&github_api().await.unwrap())?.with_cors(&cors())
 }
 
 pub async fn languages() -> Result<Response> {
-  Response::from_json(&filter_languages().await)
+  Response::from_json(&filter_languages().await)?.with_cors(&cors())
 }
 
 pub async fn language(language: &str) -> Result<Response> {
-  Response::from_json(&filter_images_by_language(language).await)
+  Response::from_json(&filter_images_by_language(language).await)?
+    .with_cors(&cors())
 }
 
 pub async fn random() -> Result<Response> {
@@ -93,5 +95,6 @@ pub async fn random() -> Result<Response> {
   Response::from_json(&SenpyRandom {
     language: random_language.clone(),
     image:    random_image.clone(),
-  })
+  })?
+  .with_cors(&cors())
 }
