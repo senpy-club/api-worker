@@ -32,7 +32,7 @@ serde_json = "1.0.79"
 
 # Utility
 getrandom = { version = "0.2.5", features = ["js"] }
-rand = "0.8.3"
+rand = "0.8.5"
 dotenv = "0.15.0"
 
 # Worker
