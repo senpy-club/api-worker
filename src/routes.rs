@@ -26,13 +26,14 @@ use crate::{
 
 pub fn index() -> Result<Response> {
   Response::ok(
-    r#"# senpy-club/api-worker
+    r#"senpy-club/api-worker
+=====================
 
-## routes
-if a language requires a parameter, it will be notated like ":this".
-for example; if a route is notated as "/v1/route/:parameter", you can
-access that route via the url
-"http://this.domain/v1/route/something"
+routes
+------
+if a language requires a parameter, it will be notated like ":this". for
+example; if a route is notated as "/v1/route/:parameter", you can access that
+route via the url "http://this.domain/v1/route/something".
 
 - /
   - /: index page (you are here)
@@ -40,24 +41,29 @@ access that route via the url
 - /v1
   - /github: github api mirror
   - /languages: a list of all languages that appear in _the_ repository
-  - /language/:language: get a list of all images that pertain to the language ":language"
+  - /language/:language: get a list of all images that pertain to the language
+    ":language"
 
-## notes
+notes
+-----
 
-### contributing
+contributing
+^^^^^^^^^^^^
 
 if you'd like to support the project in any way, check out the repository!
-<https://github.com/senpy-club/api>
+<https://github.com/senpy-club/api-worker>
 
-### supporting
+supporting
+^^^^^^^^^^
 
-if you would like to support my development ventures, visit my github profile here :3
-<https://github.com/fuwn>
+if you would like to support my development ventures, visit my github profile
+`here <https://github.com/fuwn>`_.
 
-### license
+license
+^^^^^^^
 
-gnu general public license v3.0 (gpl-3.0-only)
-<https://github.com/senpy-club/api-worker/blob/main/LICENSE>"#,
+`gnu general public license v3.0 (:code:`gpl-3.0-only`)
+<https://github.com/senpy-club/api-worker/blob/main/LICENSE>`_"#,
   )
 }
 
