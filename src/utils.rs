@@ -16,6 +16,8 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
+use worker::Cors;
+
 use crate::{constants, structures::GitHubAPIResponse};
 
 /// # Errors
@@ -86,4 +88,10 @@ pub async fn filter_images_by_language(language: &str) -> Vec<String> {
   }
 
   images
+}
+
+pub fn cors() -> Cors {
+  Cors::default()
+    .with_origins(vec!["*"])
+    .with_methods(vec![worker::Method::Get])
 }
