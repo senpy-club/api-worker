@@ -1,14 +1,17 @@
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
 [package]
-name = "senpy-api"
+name = "api-worker"
 version = "0.1.0"
 authors = ["Fuwn <fuwnzy@gmail.com>"]
 edition = "2021"
-#description = ""
+description = ""
 readme = "README.md"
-homepage = "https://github.com/senpy-club/api"
-repository = "https://github.com/senpy-club/api"
+homepage = "https://github.com/senpy-club/api-worker"
+repository = "https://github.com/senpy-club/api-worker"
 license = "GPL-3.0-only"
 keywords = ["rust", "anime", "senpy"]
+categories = []
 publish = false
 
 [dependencies]
