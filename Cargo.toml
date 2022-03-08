@@ -5,26 +5,41 @@ name = "api-worker"
 version = "0.1.0"
 authors = ["Fuwn <contact@fuwn.me>"]
 edition = "2021"
-description = ""
+description = "API (as a Cloudflare Worker!)"
 readme = "README.md"
 homepage = "https://github.com/senpy-club/api-worker"
 repository = "https://github.com/senpy-club/api-worker"
 license = "GPL-3.0-only"
 keywords = ["rust", "anime", "senpy"]
-categories = []
+categories = ["web-programming", "web-programming::http-server"]
 publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# Slower builds, faster executables
+[profile.release]
+lto = "fat"
+codegen-units = 1
+# Optimize for size
+opt-level = "s"
 
 [dependencies]
 # Serialization
-serde = "1.0.125"
-serde_derive = "1.0.125"
+serde = "1.0.136"
+serde_derive = "1.0.136"
+serde_json = "1.0.79"
 
 # Utility
+getrandom = { version = "0.2.5", features = ["js"] }
 rand = "0.8.3"
 dotenv = "0.15.0"
 
+# Worker
+worker = "0.0.9"
+
+# Utility
+cfg-if = "0.1.10"
+
 # Web
-actix-web = { version = "3.3.2", features = ["rustls"] }
-qstring = "0.7.2"
-actix-cors = "0.5.4"
-actix-ratelimit = "0.3.1"
+reqwest = { version = "0.11.9", features = ["json"] }
