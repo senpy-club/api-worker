@@ -1,8 +1,12 @@
 :code:`api-worker`
 ==================
 
+quick links
+^^^^^^^^^^^
+
 .. raw:: html
-  <p align="center">
+
+  <p>
     <a href="https://discord.com/invite/yWKgRT6">
       <img src="https://img.shields.io/discord/246524734718738442"
            alt="discord" />
@@ -23,4 +27,5 @@
 
 license
 ^^^^^^^
+
 `gnu general public license v3.0 <https://github.com/senpy-club/api-worker/blob/main/LICENSE>`_
