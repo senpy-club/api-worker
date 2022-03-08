@@ -10,6 +10,7 @@ format_macro_matchers = true
 format_strings = true
 imports_layout = "HorizontalVertical"
 license_template_path = ".license_template"
+max_width = 80
 match_arm_blocks = false
 imports_granularity = "Crate"
 newline_style = "Unix"

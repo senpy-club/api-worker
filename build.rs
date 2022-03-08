@@ -16,40 +16,32 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
-#![allow(clippy::used_underscore_binding)]
+use std::env::var;
 
-use serde_derive::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize)]
-pub struct GitHubAPIResponse {
-  pub sha:       String,
-  pub url:       String,
-  pub tree:      Vec<GitHubAPIResponseTree>,
-  pub truncated: bool,
-}
-impl Default for GitHubAPIResponse {
-  fn default() -> Self {
-    Self {
-      sha:       "rate limited".to_string(),
-      url:       "rate limited".to_string(),
-      tree:      vec![],
-      truncated: false,
+/// <https://github.com/denoland/deno/blob/main/cli/build.rs#L265:L285>
+fn git_commit_hash() -> String {
+  if let Ok(output) = std::process::Command::new("git")
+    .arg("rev-list")
+    .arg("-1")
+    .arg("HEAD")
+    .output()
+  {
+    if output.status.success() {
+      std::str::from_utf8(&output.stdout[..40])
+        .unwrap()
+        .to_string()
+    } else {
+      "UNKNOWN".to_string()
     }
+  } else {
+    "UNKNOWN".to_string()
   }
 }
 
-#[derive(Serialize, Deserialize, Default)]
-pub struct GitHubAPIResponseTree {
-  pub path:   String,
-  pub mode:   String,
-  #[serde(rename = "type")]
-  pub r#type: String,
-  pub sha:    String,
-  pub url:    String,
-}
-
-#[derive(Serialize, Deserialize, Default)]
-pub struct SenpyRandom {
-  pub language: String,
-  pub image:    String,
+fn main() {
+  println!("cargo:rerun-if-changed=build.rs");
+  println!("cargo:rustc-env=GIT_COMMIT_HASH={}", git_commit_hash());
+  println!("cargo:rerun-if-env-changed=GIT_COMMIT_HASH");
+  println!("cargo:rustc-env=TARGET={}", var("TARGET").unwrap());
+  println!("cargo:rustc-env=PROFILE={}", var("PROFILE").unwrap());
 }
