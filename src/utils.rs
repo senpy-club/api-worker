@@ -16,22 +16,17 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use crate::{
-  constants::{GITHUB_API_ENDPOINT, GITHUB_USER_CONTENT},
-  structures::GitHubAPIResponse,
-};
+use crate::{constants, structures::GitHubAPIResponse};
 
 /// # Errors
 /// if GitHub API is unresponsive
-pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error>> {
-  let mut client = actix_web::client::Client::new()
-    .get(GITHUB_API_ENDPOINT)
+pub async fn github_api(
+) -> Result<GitHubAPIResponse, Box<dyn std::error::Error>> {
+  let mut client = reqwest::Client::new()
+    .get(constants::GITHUB_API_ENDPOINT)
     .header(
       "User-Agent",
-      format!(
-        "senpy-api - {}",
-        (0..10).map(|_| rand::random::<char>()).collect::<String>()
-      ),
+      format!("senpy-club/api-worker - {}", env!("GIT_COMMIT_HASH")),
     );
 
   if std::env::var("GITHUB_TOKEN").is_ok() {
@@ -46,11 +41,9 @@ pub async fn github_api() -> Result<GitHubAPIResponse, Box<dyn std::error::Error
 
   Ok(
     client
-      .timeout(std::time::Duration::from_secs(60))
       .send()
       .await?
       .json::<GitHubAPIResponse>()
-      .limit(20_000_000)
       .await
       .unwrap_or_default(),
   )
@@ -62,8 +55,7 @@ pub async fn filter_languages() -> Vec<String> {
   let mut languages = vec![];
 
   for i in github_api().await.unwrap().tree {
-    #[allow(clippy::used_underscore_binding)]
-    if i._type == "tree" {
+    if i.r#type == "tree" {
       languages.push(i.path);
     }
   }
@@ -76,14 +68,20 @@ pub async fn filter_languages() -> Vec<String> {
 pub async fn filter_images_by_language(language: &str) -> Vec<String> {
   let mut images = vec![];
 
-  for i in github_api().await.unwrap().tree {
-    // Example:
-    //  "Language/Image.png" would become ["Language", "Image.png"]
+  // URL (percent) encoding of pound symbol to pound symbol
+  let language = language.replace("%23", "#");
 
-    // TODO: Fix this with type_ascription
-    let x: Vec<&str> = i.path.split('/').collect();
-    if x[0] == language && i.path.contains('/') {
-      images.push(format!("{}{}", GITHUB_USER_CONTENT, i.path));
+  for item in github_api().await.unwrap().tree {
+    if item.path.split('/').collect::<Vec<&str>>()[0] == language
+      && item.path.contains('/')
+    {
+      images.push(format!(
+        "{}{}",
+        constants::GITHUB_USER_CONTENT,
+        // Pound symbols to URL (percent) encoding of pound symbol because we
+        // are pushing a URL, not a string
+        item.path.replace("#", "%23")
+      ));
     }
   }
 

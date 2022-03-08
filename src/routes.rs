@@ -16,74 +16,67 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use actix_web::{HttpRequest, HttpResponse};
 use rand::{thread_rng, Rng};
+use worker::{Response, Result};
 
 use crate::{
   structures::SenpyRandom,
   utils::{filter_images_by_language, filter_languages, github_api},
 };
 
-#[get("/")]
-pub fn index() -> HttpResponse {
-  HttpResponse::Ok().body(
-    r#"# senpy-api
+pub fn index() -> Result<Response> {
+  Response::ok(
+    r#"# senpy-club/api-worker
+
 ## routes
-if a language requires a parameter, it will be notated like <this>.
-for example; if a route is notated as "/api/v1/route?<parameter>", you can
+if a language requires a parameter, it will be notated like ":this".
+for example; if a route is notated as "/v1/route/:parameter", you can
 access that route via the url
-"http://this.domain/api/v1/route?parameter=something"
+"http://this.domain/v1/route/something"
 
 - /
-    - /: index page (you are here)
+  - /: index page (you are here)
 
-- /api/v1
-    - /github: github api mirror
-    - /languages: a list of all languages that appear in _the_ repository
-    - /language?<lang>: get a list of all images that pertain to the language "<lang>"
+- /v1
+  - /github: github api mirror
+  - /languages: a list of all languages that appear in _the_ repository
+  - /language/:language: get a list of all images that pertain to the language ":language"
 
 ## notes
-### rate-limit (s)
-there aren't any rate-limits or whatnot on api usage but don't abuse it, it only takes one bad
-apple to spoil the lot.
 
 ### contributing
-if you'd like to support the project in anyway, check out the repository!
-https://github.com/senpy-club/api
+
+if you'd like to support the project in any way, check out the repository!
+<https://github.com/senpy-club/api>
 
 ### supporting
+
 if you would like to support my development ventures, visit my github profile here :3
-https://github.com/fuwn
+<https://github.com/fuwn>
 
 ### license
+
 gnu general public license v3.0 (gpl-3.0-only)
-https://github.com/senpy-club/api/blob/main/license"#,
+<https://github.com/senpy-club/api-worker/blob/main/LICENSE>"#,
   )
 }
 
-#[get("/github")]
-pub async fn github() -> HttpResponse { HttpResponse::Ok().json(github_api().await.unwrap()) }
-
-#[get("/languages")]
-pub async fn languages() -> HttpResponse { HttpResponse::Ok().json(filter_languages().await) }
-
-#[get("/language")]
-pub async fn language(req: HttpRequest) -> HttpResponse {
-  let queries = qstring::QString::from(req.query_string());
-  let lang = queries.get("lang").unwrap_or("null");
-
-  return if lang == "null" {
-    HttpResponse::Ok().json(vec!["invalid language or no language specified".to_string()])
-  } else {
-    HttpResponse::Ok().json(filter_images_by_language(lang).await)
-  };
+pub async fn github() -> Result<Response> {
+  Response::from_json(&github_api().await.unwrap())
 }
 
-#[get("/random")]
-pub async fn random() -> HttpResponse {
+pub async fn languages() -> Result<Response> {
+  Response::from_json(&filter_languages().await)
+}
+
+pub async fn language(language: &str) -> Result<Response> {
+  Response::from_json(&filter_images_by_language(language).await)
+}
+
+pub async fn random() -> Result<Response> {
   let filtered_languages = filter_languages().await;
-  let random_language =
-    &filtered_languages[thread_rng().gen_range(0..filtered_languages.len() - 1)];
+  let random_language = &filtered_languages
+    [thread_rng().gen_range(0..filtered_languages.len() - 1)];
   let filtered_images = filter_images_by_language(random_language).await;
   let random_image = if filtered_images.len() == 1 {
     &filtered_images[0]
@@ -91,7 +84,7 @@ pub async fn random() -> HttpResponse {
     &filtered_images[thread_rng().gen_range(0..filtered_images.len() - 1)]
   };
 
-  HttpResponse::Ok().json(SenpyRandom {
+  Response::from_json(&SenpyRandom {
     language: random_language.clone(),
     image:    random_image.clone(),
   })
