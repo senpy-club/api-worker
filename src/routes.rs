@@ -38,7 +38,7 @@ route via the url "http://this.domain/v1/route/something".
 - /
   - /: index page (you are here)
 
-- /v1
+- /v2
   - /github: github api mirror
   - /languages: a list of all languages that appear in _the_ repository
   - /language/:language: get a list of all images that pertain to the language
