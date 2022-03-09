@@ -45,3 +45,10 @@ lazy_static = "1.4.0"
 
 # Web
 reqwest = { version = "0.11.9", features = ["json"] }
+
+[build-dependencies]
+# Build variables
+vergen = "6.0.2"
+
+# `Result`
+anyhow = "1.0.56"

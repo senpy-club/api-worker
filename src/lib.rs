@@ -62,7 +62,7 @@ pub async fn main(
     .get("/v2/version", |_, _| {
       Response::from_json(&serde_json::json!({
         "crate_version": env!("CARGO_PKG_VERSION"),
-        "git_commit_hash": env!("GIT_COMMIT_HASH"),
+        "git_commit_hash": env!("VERGEN_GIT_SHA"),
       }))?
       .with_cors(&utils::cors())
     })

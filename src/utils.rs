@@ -28,7 +28,7 @@ pub async fn github_api(
     .get(constants::GITHUB_API_ENDPOINT)
     .header(
       "User-Agent",
-      format!("senpy-club/api-worker - {}", env!("GIT_COMMIT_HASH")),
+      format!("senpy-club/api-worker - {}", env!("VERGEN_GIT_SHA")),
     );
 
   if std::env::var("GITHUB_TOKEN").is_ok() {
