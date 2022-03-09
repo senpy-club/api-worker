@@ -25,7 +25,7 @@ use crate::{
 };
 
 pub fn index() -> Result<Response> {
-  Response::ok(include_str!("index.rst"))?.with_cors(&cors())
+  Response::ok(&*crate::constants::INDEX)?.with_cors(&cors())
 }
 
 pub async fn github() -> Result<Response> {
