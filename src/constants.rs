@@ -24,7 +24,7 @@ lazy_static::lazy_static! {
       include_str!("index.rst"),
       format_args!(
         "https://github.com/senpy-club/api-worker/tree/{}",
-        env!("GIT_COMMIT_HASH"),
+        env!("VERGEN_GIT_SHA"),
       )
     )
   };
