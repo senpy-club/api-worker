@@ -16,7 +16,27 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
-pub const GITHUB_USER_CONTENT: &str =
-  "https://raw.githubusercontent.com/laynH/Anime-Girls-Holding-Programming-Books/master/";
-pub const GITHUB_API_ENDPOINT: &str = "https://api.github.com/repos/laynH/Anime-Girls-Holding-Progr\
-amming-Books/git/trees/master?recursive=1";
+use const_format::formatcp;
+
+lazy_static::lazy_static! {
+  pub static ref INDEX: String = {
+    format!(
+      include_str!("index.rst"),
+      format_args!(
+        "https://github.com/senpy-club/api-worker/tree/{}",
+        env!("GIT_COMMIT_HASH"),
+      )
+    )
+  };
+}
+
+const GITHUB_REPOSITORY: &str =
+  "cat-milk/Anime-Girls-Holding-Programming-Books";
+pub const GITHUB_USER_CONTENT: &str = formatcp!(
+  "https://raw.githubusercontent.com/{}/master/",
+  GITHUB_REPOSITORY
+);
+pub const GITHUB_API_ENDPOINT: &str = formatcp!(
+  "https://api.github.com/repos/{}/git/trees/master?recursive=1",
+  GITHUB_REPOSITORY,
+);

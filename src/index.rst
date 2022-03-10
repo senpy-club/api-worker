@@ -1,6 +1,8 @@
 api.senpy.club
 ==============
 
+This API is on commit {}.
+
 Routes
 ------
 
