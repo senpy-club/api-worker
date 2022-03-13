@@ -1,6 +1,10 @@
 :code:`api-worker`
 ==================
 
+Need an API wrapper for Rust? Check out `senpy-rs <https://github.com/senpy-club/senpy-rs>`_!
+
+Need an API wrapper for another language? Check out `senpy-ffi <https://github.com/senpy-club/senpy-ffi>`_!
+
 Quick links
 ^^^^^^^^^^^
 
