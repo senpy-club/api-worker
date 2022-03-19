@@ -27,6 +27,9 @@
 #![deny(clippy::all, clippy::pedantic)] // clippy::nursery
 #![recursion_limit = "128"]
 
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc<'_> = wee_alloc::WeeAlloc::INIT;
+
 mod constants;
 mod routes;
 mod structures;
