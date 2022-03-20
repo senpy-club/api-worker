@@ -35,6 +35,7 @@ mod routes;
 mod structures;
 mod utils;
 
+use serde_json::json;
 use worker::Response;
 
 /// # Errors
@@ -63,11 +64,17 @@ pub async fn main(
     })
     .get_async("/v2/random", |_, _| async move { routes::random().await })
     .get("/v2/version", |_, _| {
-      Response::from_json(&serde_json::json!({
+      Response::from_json(&json!({
         "crate_version": env!("CARGO_PKG_VERSION"),
         "git_commit_hash": env!("VERGEN_GIT_SHA"),
       }))?
       .with_cors(&utils::cors())
+    })
+    .get("/v2/me", |req, _| {
+      Response::from_json(&json!({
+        "ip": req.clone().unwrap().headers().get("CF-Connecting-IP").unwrap().unwrap(),
+      }))?
+        .with_cors(&utils::cors())
     })
     .run(request, environment)
     .await
