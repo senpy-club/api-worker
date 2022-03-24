@@ -16,27 +16,29 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use const_format::formatcp;
-
-lazy_static::lazy_static! {
-  pub static ref INDEX: String = {
-    format!(
-      include_str!("index.rst"),
-      format_args!(
-        "https://github.com/senpy-club/api-worker/tree/{}",
-        env!("VERGEN_GIT_SHA"),
-      )
-    )
-  };
-}
+use std::lazy::SyncLazy;
 
 const GITHUB_REPOSITORY: &str =
   "cat-milk/Anime-Girls-Holding-Programming-Books";
-pub const GITHUB_USER_CONTENT: &str = formatcp!(
-  "https://raw.githubusercontent.com/{}/master/",
-  GITHUB_REPOSITORY
-);
-pub const GITHUB_API_ENDPOINT: &str = formatcp!(
-  "https://api.github.com/repos/{}/git/trees/master?recursive=1",
-  GITHUB_REPOSITORY,
-);
+
+pub static INDEX: SyncLazy<String> = SyncLazy::new(|| {
+  format!(
+    include_str!("index.rst"),
+    format_args!(
+      "https://github.com/senpy-club/api-worker/tree/{}",
+      env!("VERGEN_GIT_SHA"),
+    )
+  )
+});
+pub static GITHUB_USER_CONTENT: SyncLazy<String> = SyncLazy::new(|| {
+  format!(
+    "https://raw.githubusercontent.com/{}/master/",
+    GITHUB_REPOSITORY
+  )
+});
+pub static GITHUB_API_ENDPOINT: SyncLazy<String> = SyncLazy::new(|| {
+  format!(
+    "https://api.github.com/repos/{}/git/trees/master?recursive=1",
+    GITHUB_REPOSITORY,
+  )
+});

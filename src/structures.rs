@@ -20,7 +20,7 @@
 
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct GitHubAPIResponse {
   pub sha:       String,
   pub url:       String,
@@ -38,7 +38,7 @@ impl Default for GitHubAPIResponse {
   }
 }
 
-#[derive(Serialize, Deserialize, Default)]
+#[derive(Serialize, Deserialize, Default, Clone)]
 pub struct GitHubAPIResponseTree {
   pub path:   String,
   pub mode:   String,

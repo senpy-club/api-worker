@@ -2,7 +2,7 @@
 
 [package]
 name = "api-worker"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Fuwn <contact@fuwn.me>"]
 edition = "2021"
 description = "API (as a Cloudflare Worker!)"
@@ -37,11 +37,6 @@ dotenv = "0.15.0"
 
 # Worker
 worker = "0.0.9"
-
-# Utility
-cfg-if = "1.0.0"
-const_format = "0.2.22"
-lazy_static = "1.4.0"
 
 # Web
 reqwest = { version = "0.11.10", features = ["json"] }
