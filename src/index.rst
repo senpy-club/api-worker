@@ -20,6 +20,12 @@ For example; if a route is notated as "/v2/route/:parameter", you can access tha
     - /random: A random image from the https://github.com/cat-milk/Anime-Girls-Holding-Programming-Books repository
     - /me: For future implementation. At the moment; only contains the caller's IP.
 
+- /v2/boys
+    - /github: GitHub API mirror for the https://github.com/flyingcakes85/Anime-Boys-Holding-Programming-Books repository
+    - /languages: A list of all languages that appear in the https://github.com/flyingcakes85/Anime-Boys-Holding-Programming-Books repository
+    - /language/:language: A list of all images that are labeled under the language, ":language", in the https://github.com/flyingcakes85/Anime-Boys-Holding-Programming-Books repository
+    - /random: A random image from the https://github.com/flyingcakes85/Anime-Boys-Holding-Programming-Books repository
+
 Notes
 -----
 

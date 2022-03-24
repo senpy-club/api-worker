@@ -20,7 +20,7 @@ use rand::{thread_rng, Rng};
 use worker::{Response, Result};
 
 use crate::{
-  structures::SenpyRandom,
+  structures::{SenpyRandom, Type},
   utils::{cors, filter_images_by_language, filter_languages, github_api},
 };
 
@@ -28,24 +28,26 @@ pub fn index() -> Result<Response> {
   Response::ok(&*crate::constants::INDEX)?.with_cors(&cors())
 }
 
-pub async fn github() -> Result<Response> {
-  Response::from_json(&github_api().await.unwrap())?.with_cors(&cors())
-}
-
-pub async fn languages() -> Result<Response> {
-  Response::from_json(&filter_languages().await)?.with_cors(&cors())
-}
-
-pub async fn language(language: &str) -> Result<Response> {
-  Response::from_json(&filter_images_by_language(language).await)?
+pub async fn github(repository: Type) -> Result<Response> {
+  Response::from_json(&github_api(repository).await.unwrap())?
     .with_cors(&cors())
 }
 
-pub async fn random() -> Result<Response> {
-  let filtered_languages = filter_languages().await;
+pub async fn languages(repository: Type) -> Result<Response> {
+  Response::from_json(&filter_languages(repository).await)?.with_cors(&cors())
+}
+
+pub async fn language(language: &str, repository: Type) -> Result<Response> {
+  Response::from_json(&filter_images_by_language(language, repository).await)?
+    .with_cors(&cors())
+}
+
+pub async fn random(repository: Type) -> Result<Response> {
+  let filtered_languages = filter_languages(repository.clone()).await;
   let random_language = &filtered_languages
     [thread_rng().gen_range(0..filtered_languages.len() - 1)];
-  let filtered_images = filter_images_by_language(random_language).await;
+  let filtered_images =
+    filter_images_by_language(random_language, repository).await;
   let random_image = if filtered_images.len() == 1 {
     &filtered_images[0]
   } else {
