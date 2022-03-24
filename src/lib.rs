@@ -16,6 +16,7 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
+#![feature(once_cell)]
 #![deny(
   warnings,
   nonstandard_style,
