@@ -31,6 +31,7 @@
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc<'_> = wee_alloc::WeeAlloc::INIT;
 
+mod boys;
 mod constants;
 mod routes;
 mod structures;
@@ -38,6 +39,8 @@ mod utils;
 
 use serde_json::json;
 use worker::Response;
+
+use crate::structures::Type;
 
 /// # Errors
 /// if `worker::Router` errors
@@ -52,18 +55,30 @@ pub async fn main(
   worker::Router::new()
     .get("/", |_, _| routes::index())
     .get("/v2", |_, _| routes::index())
-    .get_async("/v2/github", |_, _| async move { routes::github().await })
+    .get_async("/v2/github", |_, _| async move { routes::github(Type::Girls).await })
+    .get_async("/v2/boys/github", |_, _| async move { routes::github(Type::Boys).await })
     .get_async(
       "/v2/languages",
-      |_, _| async move { routes::languages().await },
+      |_, _| async move { routes::languages(Type::Girls).await },
+    )
+    .get_async(
+      "/v2/boys/languages",
+      |_, _| async move { routes::languages(Type::Boys).await },
     )
     .get_async("/v2/language/:language", |_, ctx| {
       async move {
-        routes::language(ctx.param("language").unwrap_or(&"null".to_string()))
+        routes::language(ctx.param("language").unwrap_or(&"null".to_string()), Type::Girls)
           .await
       }
     })
-    .get_async("/v2/random", |_, _| async move { routes::random().await })
+    .get_async("/v2/boys/language/:language", |_, ctx| {
+      async move {
+        routes::language(ctx.param("language").unwrap_or(&"null".to_string()), Type::Boys)
+          .await
+      }
+    })
+    .get_async("/v2/random", |_, _| async move { routes::random(Type::Girls).await })
+    .get_async("/v2/boys/random", |_, _| async move { routes::random(Type::Boys).await })
     .get("/v2/version", |_, _| {
       Response::from_json(&json!({
         "crate_version": env!("CARGO_PKG_VERSION"),

@@ -20,6 +20,12 @@
 
 use serde_derive::{Deserialize, Serialize};
 
+#[derive(PartialEq, Clone)]
+pub enum Type {
+  Girls,
+  Boys,
+}
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct GitHubAPIResponse {
   pub sha:       String,
