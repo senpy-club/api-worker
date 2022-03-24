@@ -16,39 +16,55 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
+use std::{lazy::SyncLazy, sync::Mutex};
+
 use worker::Cors;
 
 use crate::{constants, structures::GitHubAPIResponse};
+
+static CACHE_UNSET: SyncLazy<Mutex<bool>> = SyncLazy::new(|| Mutex::new(true));
+static CACHE_ACCESS_COUNT: SyncLazy<Mutex<usize>> =
+  SyncLazy::new(|| Mutex::new(0));
+static GITHUB_API_CACHE: SyncLazy<Mutex<GitHubAPIResponse>> =
+  SyncLazy::new(|| Mutex::new(GitHubAPIResponse::default()));
 
 /// # Errors
 /// if GitHub API is unresponsive
 pub async fn github_api(
 ) -> Result<GitHubAPIResponse, Box<dyn std::error::Error>> {
-  let mut client = reqwest::Client::new()
-    .get(constants::GITHUB_API_ENDPOINT)
-    .header(
-      "User-Agent",
-      format!("senpy-club/api-worker - {}", env!("VERGEN_GIT_SHA")),
-    );
+  if *CACHE_UNSET.lock().unwrap()
+    || *CACHE_ACCESS_COUNT.lock().unwrap() % 50 == 0
+  {
+    *CACHE_UNSET.lock().unwrap() = false;
 
-  if std::env::var("GITHUB_TOKEN").is_ok() {
-    client = client.header(
-      "Authorization",
-      format!(
-        "token {}",
-        std::env::var("GITHUB_TOKEN").unwrap_or_else(|_| "Null".to_string())
-      ),
-    );
-  }
+    let mut client = reqwest::Client::new()
+      .get(&*constants::GITHUB_API_ENDPOINT)
+      .header(
+        "User-Agent",
+        format!("senpy-club/api-worker - {}", env!("VERGEN_GIT_SHA")),
+      );
 
-  Ok(
-    client
+    if std::env::var("GITHUB_TOKEN").is_ok() {
+      client = client.header(
+        "Authorization",
+        format!(
+          "token {}",
+          std::env::var("GITHUB_TOKEN").unwrap_or_else(|_| "Null".to_string())
+        ),
+      );
+    }
+
+    *GITHUB_API_CACHE.lock().unwrap() = client
       .send()
       .await?
       .json::<GitHubAPIResponse>()
       .await
-      .unwrap_or_default(),
-  )
+      .unwrap_or_default();
+  }
+
+  *CACHE_ACCESS_COUNT.lock().unwrap() += 1;
+
+  Ok((*GITHUB_API_CACHE.lock().unwrap()).clone())
 }
 
 /// # Panics
@@ -79,7 +95,7 @@ pub async fn filter_images_by_language(language: &str) -> Vec<String> {
     {
       images.push(format!(
         "{}{}",
-        constants::GITHUB_USER_CONTENT,
+        *constants::GITHUB_USER_CONTENT,
         // Pound symbols to URL (percent) encoding of pound symbol because we
         // are pushing a URL, not a string
         item.path.replace('#', "%23")
