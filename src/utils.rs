@@ -20,25 +20,52 @@ use std::{lazy::SyncLazy, sync::Mutex};
 
 use worker::Cors;
 
-use crate::{constants, structures::GitHubAPIResponse};
+use crate::{
+  constants,
+  structures::{GitHubAPIResponse, Type},
+};
 
-static CACHE_UNSET: SyncLazy<Mutex<bool>> = SyncLazy::new(|| Mutex::new(true));
-static CACHE_ACCESS_COUNT: SyncLazy<Mutex<usize>> =
-  SyncLazy::new(|| Mutex::new(0));
-static GITHUB_API_CACHE: SyncLazy<Mutex<GitHubAPIResponse>> =
-  SyncLazy::new(|| Mutex::new(GitHubAPIResponse::default()));
+static CACHE_UNSET: SyncLazy<Mutex<(bool, bool)>> =
+  SyncLazy::new(|| Mutex::new((true, true)));
+static CACHE_ACCESS_COUNT: SyncLazy<Mutex<(usize, usize)>> =
+  SyncLazy::new(|| Mutex::new((0, 0)));
+static GITHUB_API_CACHE: SyncLazy<
+  Mutex<(GitHubAPIResponse, GitHubAPIResponse)>,
+> = SyncLazy::new(|| {
+  Mutex::new((GitHubAPIResponse::default(), GitHubAPIResponse::default()))
+});
+
+use crate::boys;
 
 /// # Errors
 /// if GitHub API is unresponsive
 pub async fn github_api(
+  repository: Type,
 ) -> Result<GitHubAPIResponse, Box<dyn std::error::Error>> {
-  if *CACHE_UNSET.lock().unwrap()
-    || *CACHE_ACCESS_COUNT.lock().unwrap() % 50 == 0
-  {
-    *CACHE_UNSET.lock().unwrap() = false;
+  let unset = if repository == Type::Girls {
+    (*CACHE_UNSET.lock().unwrap()).0
+  } else {
+    (*CACHE_UNSET.lock().unwrap()).1
+  };
+  let access_count = if repository == Type::Girls {
+    (*CACHE_ACCESS_COUNT.lock().unwrap()).0
+  } else {
+    (*CACHE_ACCESS_COUNT.lock().unwrap()).1
+  };
+
+  if unset || access_count % 50 == 0 {
+    if repository == Type::Girls {
+      (*CACHE_UNSET.lock().unwrap()).0 = false;
+    } else {
+      (*CACHE_UNSET.lock().unwrap()).1 = false;
+    };
 
     let mut client = reqwest::Client::new()
-      .get(&*constants::GITHUB_API_ENDPOINT)
+      .get(if repository == Type::Girls {
+        &*constants::GITHUB_API_ENDPOINT
+      } else {
+        &*boys::GITHUB_API_ENDPOINT
+      })
       .header(
         "User-Agent",
         format!("senpy-club/api-worker - {}", env!("VERGEN_GIT_SHA")),
@@ -54,25 +81,39 @@ pub async fn github_api(
       );
     }
 
-    *GITHUB_API_CACHE.lock().unwrap() = client
+    let response = client
       .send()
       .await?
       .json::<GitHubAPIResponse>()
       .await
       .unwrap_or_default();
+
+    if repository == Type::Girls {
+      (*GITHUB_API_CACHE.lock().unwrap()).0 = response;
+    } else {
+      (*GITHUB_API_CACHE.lock().unwrap()).1 = response;
+    }
   }
 
-  *CACHE_ACCESS_COUNT.lock().unwrap() += 1;
+  if repository == Type::Girls {
+    (*CACHE_ACCESS_COUNT.lock().unwrap()).0 += 1;
+  } else {
+    (*CACHE_ACCESS_COUNT.lock().unwrap()).1 += 1;
+  };
 
-  Ok((*GITHUB_API_CACHE.lock().unwrap()).clone())
+  Ok(if repository == Type::Girls {
+    (*GITHUB_API_CACHE.lock().unwrap()).0.clone()
+  } else {
+    (*GITHUB_API_CACHE.lock().unwrap()).1.clone()
+  })
 }
 
 /// # Panics
 /// if GitHub API is unresponsive
-pub async fn filter_languages() -> Vec<String> {
+pub async fn filter_languages(repository: Type) -> Vec<String> {
   let mut languages = vec![];
 
-  for i in github_api().await.unwrap().tree {
+  for i in github_api(repository).await.unwrap().tree {
     if i.r#type == "tree" {
       languages.push(i.path);
     }
@@ -83,19 +124,26 @@ pub async fn filter_languages() -> Vec<String> {
 
 /// # Panics
 /// if GitHub API is unresponsive
-pub async fn filter_images_by_language(language: &str) -> Vec<String> {
+pub async fn filter_images_by_language(
+  language: &str,
+  repository: Type,
+) -> Vec<String> {
   let mut images = vec![];
 
   // URL (percent) encoding of pound symbol to pound symbol
   let language = language.replace("%23", "#");
 
-  for item in github_api().await.unwrap().tree {
+  for item in github_api(repository.clone()).await.unwrap().tree {
     if item.path.split('/').collect::<Vec<&str>>()[0] == language
       && item.path.contains('/')
     {
       images.push(format!(
         "{}{}",
-        *constants::GITHUB_USER_CONTENT,
+        if repository == Type::Girls {
+          &*constants::GITHUB_USER_CONTENT
+        } else {
+          &*boys::GITHUB_USER_CONTENT
+        },
         // Pound symbols to URL (percent) encoding of pound symbol because we
         // are pushing a URL, not a string
         item.path.replace('#', "%23")
