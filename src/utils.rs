@@ -20,6 +20,9 @@ use std::{lazy::SyncLazy, sync::Mutex};
 
 use worker::Cors;
 
+use urlparse::quote;
+use urlparse::unquote;
+
 use crate::{
   constants,
   structures::{GitHubAPIResponse, Type},
@@ -130,8 +133,8 @@ pub async fn filter_images_by_language(
 ) -> Vec<String> {
   let mut images = vec![];
 
-  // URL (percent) encoding of pound symbol to pound symbol
-  let language = language.replace("%23", "#");
+  // URL (percent) decoding
+  let language = unquote(language).ok().unwrap();
 
   for item in github_api(repository.clone()).await.unwrap().tree {
     if item.path.split('/').collect::<Vec<&str>>()[0] == language
@@ -144,9 +147,8 @@ pub async fn filter_images_by_language(
         } else {
           &*boys::GITHUB_USER_CONTENT
         },
-        // Pound symbols to URL (percent) encoding of pound symbol because we
-        // are pushing a URL, not a string
-        item.path.replace('#', "%23")
+        // URL (percent) encoding because we are pushing a URL, not a string
+        quote(item.path, b"").ok().unwrap()
       ));
     }
   }
