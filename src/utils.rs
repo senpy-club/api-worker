@@ -147,8 +147,7 @@ pub async fn filter_images_by_language(
         } else {
           &*boys::GITHUB_USER_CONTENT
         },
-        // URL (percent) encoding because we are pushing a URL, not a string
-        quote(item.path, b"").ok().unwrap()
+        item.path
       ));
     }
   }
