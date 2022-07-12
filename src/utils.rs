@@ -18,10 +18,8 @@
 
 use std::{lazy::SyncLazy, sync::Mutex};
 
-use worker::Cors;
-
-use urlparse::quote;
 use urlparse::unquote;
+use worker::Cors;
 
 use crate::{
   constants,
