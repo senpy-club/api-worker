@@ -18,7 +18,6 @@
 
 use std::{lazy::SyncLazy, sync::Mutex};
 
-use urlparse::unquote;
 use worker::Cors;
 
 use crate::{
@@ -132,7 +131,7 @@ pub async fn filter_images_by_language(
   let mut images = vec![];
 
   // URL (percent) decoding
-  let language = unquote(language).ok().unwrap();
+  let language = urlparse::unquote(language).ok().unwrap();
 
   for item in github_api(repository.clone()).await.unwrap().tree {
     if item.path.split('/').collect::<Vec<&str>>()[0] == language
