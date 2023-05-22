@@ -137,15 +137,22 @@ pub async fn filter_images_by_language(
     if item.path.split('/').collect::<Vec<&str>>()[0] == language
       && item.path.contains('/')
     {
-      images.push(format!(
-        "{}{}",
-        if repository == Type::Girls {
-          &*constants::GITHUB_USER_CONTENT
-        } else {
-          &*boys::GITHUB_USER_CONTENT
-        },
-        item.path
-      ));
+      images.push(
+        urlparse::quote(
+          format!(
+            "{}{}",
+            if repository == Type::Girls {
+              &*constants::GITHUB_USER_CONTENT
+            } else {
+              &*boys::GITHUB_USER_CONTENT
+            },
+            item.path
+          ),
+          b"",
+        )
+        .ok()
+        .unwrap(),
+      );
     }
   }
 
