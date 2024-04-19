@@ -50,4 +50,4 @@ wee_alloc = "0.4.5"
 vergen = "7.0.0"
 
 # `Result`
-anyhow = "1.0.56"
+anyhow = "1.0.82"
