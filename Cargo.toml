@@ -40,7 +40,7 @@ urlparse = "0.7.3"
 worker = "0.0.9"
 
 # Web
-reqwest = { version = "0.11.10", features = ["json"] }
+reqwest = { version = "0.12.0", features = ["json"] }
 
 # Allocator
 wee_alloc = "0.4.5"
