@@ -47,7 +47,7 @@ wee_alloc = "0.4.5"
 
 [build-dependencies]
 # Build variables
-vergen = "7.0.0"
+vergen = "9.0.0"
 
 # `Result`
 anyhow = "1.0.56"
