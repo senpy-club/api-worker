@@ -16,12 +16,12 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use std::lazy::SyncLazy;
+use std::sync::LazyLock;
 
 const GITHUB_REPOSITORY: &str =
   "cat-milk/Anime-Girls-Holding-Programming-Books";
 
-pub static INDEX: SyncLazy<String> = SyncLazy::new(|| {
+pub static INDEX: LazyLock<String> = LazyLock::new(|| {
   format!(
     include_str!("index.rst"),
     format_args!(
@@ -30,15 +30,13 @@ pub static INDEX: SyncLazy<String> = SyncLazy::new(|| {
     )
   )
 });
-pub static GITHUB_USER_CONTENT: SyncLazy<String> = SyncLazy::new(|| {
-  format!(
-    "https://raw.githubusercontent.com/{}/master/",
-    GITHUB_REPOSITORY
-  )
+
+pub static GITHUB_USER_CONTENT: LazyLock<String> = LazyLock::new(|| {
+  format!("https://raw.githubusercontent.com/{GITHUB_REPOSITORY}/master/")
 });
-pub static GITHUB_API_ENDPOINT: SyncLazy<String> = SyncLazy::new(|| {
+
+pub static GITHUB_API_ENDPOINT: LazyLock<String> = LazyLock::new(|| {
   format!(
-    "https://api.github.com/repos/{}/git/trees/master?recursive=1",
-    GITHUB_REPOSITORY,
+    "https://api.github.com/repos/{GITHUB_REPOSITORY}/git/trees/master?recursive=1",
   )
 });

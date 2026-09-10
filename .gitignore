@@ -1,7 +1,11 @@
 # Rust
 target/
-Cargo.lock
 **/*.rs.bk
 
 # IDE
 /.idea/
+
+# Local Worker build tools and artefacts
+.tools/
+build/
+.wrangler/

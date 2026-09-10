@@ -16,7 +16,6 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
-#![feature(once_cell)]
 #![deny(
   warnings,
   nonstandard_style,
@@ -39,11 +38,10 @@ mod utils;
 
 use serde_json::json;
 use worker::Response;
-
 use crate::structures::Type;
 
 /// # Errors
-/// if `worker::Router` errors
+/// The router returns an error if request handling fails.
 #[worker::event(fetch)]
 pub async fn main(
   request: worker::Request,
@@ -55,30 +53,42 @@ pub async fn main(
   worker::Router::new()
     .get("/", |_, _| routes::index())
     .get("/v2", |_, _| routes::index())
-    .get_async("/v2/github", |_, _| async move { routes::github(Type::Girls).await })
-    .get_async("/v2/boys/github", |_, _| async move { routes::github(Type::Boys).await })
-    .get_async(
-      "/v2/languages",
-      |_, _| async move { routes::languages(Type::Girls).await },
-    )
-    .get_async(
-      "/v2/boys/languages",
-      |_, _| async move { routes::languages(Type::Boys).await },
-    )
+    .get_async("/v2/github", |_, _| {
+      async move { routes::github(Type::Girls).await }
+    })
+    .get_async("/v2/boys/github", |_, _| {
+      async move { routes::github(Type::Boys).await }
+    })
+    .get_async("/v2/languages", |_, _| {
+      async move { routes::languages(Type::Girls).await }
+    })
+    .get_async("/v2/boys/languages", |_, _| {
+      async move { routes::languages(Type::Boys).await }
+    })
     .get_async("/v2/language/:language", |_, ctx| {
       async move {
-        routes::language(ctx.param("language").unwrap_or(&"null".to_string()), Type::Girls)
-          .await
+        routes::language(
+          ctx.param("language").unwrap_or(&"null".to_string()),
+          Type::Girls,
+        )
+        .await
       }
     })
     .get_async("/v2/boys/language/:language", |_, ctx| {
       async move {
-        routes::language(ctx.param("language").unwrap_or(&"null".to_string()), Type::Boys)
-          .await
+        routes::language(
+          ctx.param("language").unwrap_or(&"null".to_string()),
+          Type::Boys,
+        )
+        .await
       }
     })
-    .get_async("/v2/random", |_, _| async move { routes::random(Type::Girls).await })
-    .get_async("/v2/boys/random", |_, _| async move { routes::random(Type::Boys).await })
+    .get_async("/v2/random", |_, _| {
+      async move { routes::random(Type::Girls).await }
+    })
+    .get_async("/v2/boys/random", |_, _| {
+      async move { routes::random(Type::Boys).await }
+    })
     .get("/v2/version", |_, _| {
       Response::from_json(&json!({
         "crate_version": env!("CARGO_PKG_VERSION"),
@@ -86,11 +96,11 @@ pub async fn main(
       }))?
       .with_cors(&utils::cors())
     })
-    .get("/v2/me", |req, _| {
+    .get("/v2/me", |request, _| {
       Response::from_json(&json!({
-        "ip": req.clone().unwrap().headers().get("CF-Connecting-IP").unwrap().unwrap(),
+        "ip": request.headers().get("CF-Connecting-IP")?,
       }))?
-        .with_cors(&utils::cors())
+      .with_cors(&utils::cors())
     })
     .run(request, environment)
     .await

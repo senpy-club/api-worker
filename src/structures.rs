@@ -20,7 +20,7 @@
 
 use serde_derive::{Deserialize, Serialize};
 
-#[derive(PartialEq, Clone)]
+#[derive(PartialEq, Clone, Copy)]
 pub enum Type {
   Girls,
   Boys,
@@ -32,16 +32,6 @@ pub struct GitHubAPIResponse {
   pub url:       String,
   pub tree:      Vec<GitHubAPIResponseTree>,
   pub truncated: bool,
-}
-impl Default for GitHubAPIResponse {
-  fn default() -> Self {
-    Self {
-      sha:       "rate limited".to_string(),
-      url:       "rate limited".to_string(),
-      tree:      vec![],
-      truncated: false,
-    }
-  }
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]

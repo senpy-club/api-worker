@@ -16,47 +16,73 @@
 // Copyright (C) 2022-2022 Fuwn <contact@fuwn.me>
 // SPDX-License-Identifier: GPL-3.0-only
 
-use rand::{thread_rng, Rng};
+use rand::thread_rng;
+use serde_json::json;
 use worker::{Response, Result};
-
 use crate::{
-  structures::{SenpyRandom, Type},
-  utils::{cors, filter_images_by_language, filter_languages, github_api},
+  structures::Type,
+  utils::{
+    cors,
+    github_api,
+    images,
+    languages as catalog_languages,
+    random_entry,
+  },
 };
+
+fn unavailable() -> Result<Response> {
+  Response::from_json(
+    &json!({"error": "The image catalogue is temporarily unavailable."}),
+  )?
+  .with_status(503)
+  .with_cors(&cors())
+}
 
 pub fn index() -> Result<Response> {
   Response::ok(&*crate::constants::INDEX)?.with_cors(&cors())
 }
 
 pub async fn github(repository: Type) -> Result<Response> {
-  Response::from_json(&github_api(repository).await.unwrap())?
-    .with_cors(&cors())
+  match github_api(repository).await {
+    Ok(catalog) => Response::from_json(&catalog)?.with_cors(&cors()),
+    Err(_) => unavailable(),
+  }
 }
 
 pub async fn languages(repository: Type) -> Result<Response> {
-  Response::from_json(&filter_languages(repository).await)?.with_cors(&cors())
+  match github_api(repository).await {
+    Ok(catalog) =>
+      Response::from_json(&catalog_languages(&catalog))?.with_cors(&cors()),
+    Err(_) => unavailable(),
+  }
 }
 
 pub async fn language(language: &str, repository: Type) -> Result<Response> {
-  Response::from_json(&filter_images_by_language(language, repository).await)?
-    .with_cors(&cors())
+  let Ok(language) = urlparse::unquote(language) else {
+    return Response::from_json(
+      &json!({"error": "The language is not valid URL-encoded text."}),
+    )?
+    .with_status(400)
+    .with_cors(&cors());
+  };
+
+  match github_api(repository).await {
+    Ok(catalog) =>
+      Response::from_json(&images(&language, repository, &catalog))?
+        .with_cors(&cors()),
+    Err(_) => unavailable(),
+  }
 }
 
 pub async fn random(repository: Type) -> Result<Response> {
-  let filtered_languages = filter_languages(repository.clone()).await;
-  let random_language = &filtered_languages
-    [thread_rng().gen_range(0..filtered_languages.len() - 1)];
-  let filtered_images =
-    filter_images_by_language(random_language, repository).await;
-  let random_image = if filtered_images.len() == 1 {
-    &filtered_images[0]
-  } else {
-    &filtered_images[thread_rng().gen_range(0..filtered_images.len() - 1)]
-  };
+  match github_api(repository).await {
+    Ok(catalog) => {
+      match random_entry(repository, &catalog, &mut thread_rng()) {
+        Some(entry) => Response::from_json(&entry)?.with_cors(&cors()),
+        None => unavailable(),
+      }
+    }
 
-  Response::from_json(&SenpyRandom {
-    language: random_language.clone(),
-    image:    random_image.clone(),
-  })?
-  .with_cors(&cors())
+    Err(_) => unavailable(),
+  }
 }
